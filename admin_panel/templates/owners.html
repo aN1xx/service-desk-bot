@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Собственники - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">Собственники ({{ total }})</h1>
+    <a href="/owners/add" class="btn btn-primary">Добавить</a>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                    <th>Телефон</th>
+                    <th>ЖК</th>
+                    <th>Адрес</th>
+                    <th>Telegram ID</th>
+                    <th>Активен</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for owner in owners %}
+                <tr>
+                    <td>{{ owner.id }}</td>
+                    <td>{{ owner.full_name }}</td>
+                    <td>{{ owner.phone }}</td>
+                    <td>
+                        {% for c in owner.residential_complex.split(',') %}
+                        <span class="badge badge-new">{{ complex_display.get(c.strip(), c.strip()) }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if owner.block %}блок {{ owner.block }}, {% endif %}
+                        {% if owner.entrance %}подъезд {{ owner.entrance }}, {% endif %}
+                        кв. {{ owner.apartment }}
+                    </td>
+                    <td class="text-muted">{{ owner.telegram_id or '-' }}</td>
+                    <td>{{ 'Да' if owner.is_active else 'Нет' }}</td>
+                    <td class="actions">
+                        <a href="/owners/{{ owner.id }}/edit" class="btn btn-secondary btn-sm">Изменить</a>
+                        <form method="post" action="/owners/{{ owner.id }}/delete" style="display:inline" onsubmit="return confirm('Удалить собственника?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-muted">Собственники не найдены</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}">Назад</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+            <span class="active">{{ p }}</span>
+            {% else %}
+            <a href="?page={{ p }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}">Вперёд</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

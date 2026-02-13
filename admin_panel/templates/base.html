@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Панель управления Qvartal Smart Security — управление заявками, собственниками, мастерами и текстами бота.">
+    <meta name="author" content="Qvartal Smart Security">
+    <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
+    <title>{% block title %}QSS Админ{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
+                <img src="/static/logo.jpg" alt="QSS" style="height: 32px; border-radius: 4px;">
+                QSS Админ
+            </a>
+            <nav class="nav">
+                <a href="/" class="{{ 'active' if request.url.path == '/' else '' }}">Главная</a>
+                <a href="/tickets" class="{{ 'active' if '/tickets' in request.url.path else '' }}">Заявки</a>
+                <a href="/owners" class="{{ 'active' if '/owners' in request.url.path else '' }}">Собственники</a>
+                <a href="/masters" class="{{ 'active' if '/masters' in request.url.path else '' }}">Мастера</a>
+                <a href="/admins" class="{{ 'active' if '/admins' in request.url.path else '' }}">Админы</a>
+                <a href="/texts" class="{{ 'active' if '/texts' in request.url.path else '' }}">Тексты</a>
+                <a href="/logout" style="opacity: 0.7;">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+</html>

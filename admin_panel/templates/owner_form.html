@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редактирование' if owner else 'Добавление' }} собственника - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">{{ 'Редактирование' if owner else 'Добавление' }} собственника</h1>
+    <a href="/owners" class="btn btn-secondary">К списку</a>
+</div>
+
+<div class="card">
+    <form method="post" action="{{ '/owners/' ~ owner.id ~ '/edit' if owner else '/owners/add' }}">
+        <div class="detail-grid">
+            <div class="form-group">
+                <label class="form-label">ФИО *</label>
+                <input type="text" name="full_name" class="form-input" required value="{{ owner.full_name if owner else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Телефон *</label>
+                <input type="text" name="phone" class="form-input" required placeholder="77001234567" value="{{ owner.phone if owner else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">ЖК * (через запятую, если несколько)</label>
+                <input type="text" name="residential_complex" class="form-input" required placeholder="alasha,terekti" value="{{ owner.residential_complex if owner else '' }}">
+                <small class="text-muted">Варианты: alasha, terekti, kemel, jana_omir</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Блок</label>
+                <input type="text" name="block" class="form-input" value="{{ owner.block if owner and owner.block else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Подъезд</label>
+                <input type="text" name="entrance" class="form-input" value="{{ owner.entrance if owner and owner.entrance else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Квартира *</label>
+                <input type="text" name="apartment" class="form-input" required value="{{ owner.apartment if owner else '' }}">
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <button type="submit" class="btn btn-primary">{{ 'Сохранить' if owner else 'Создать' }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

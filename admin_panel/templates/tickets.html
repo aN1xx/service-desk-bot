@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Заявки - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">Заявки ({{ total }})</h1>
+</div>
+
+<div class="card">
+    <form class="filters" method="get">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">Все статусы</option>
+            {% for s in statuses %}
+            <option value="{{ s }}" {{ 'selected' if filter_status == s else '' }}>
+                {{ status_display.get(s, s) }}
+            </option>
+            {% endfor %}
+        </select>
+        <select name="complex" class="form-select" onchange="this.form.submit()">
+            <option value="">Все ЖК</option>
+            {% for c in complexes %}
+            <option value="{{ c }}" {{ 'selected' if filter_complex == c else '' }}>
+                {{ complex_display.get(c, c) }}
+            </option>
+            {% endfor %}
+        </select>
+        {% if filter_status or filter_complex %}
+        <a href="/tickets" class="btn btn-secondary btn-sm">Сбросить</a>
+        {% endif %}
+    </form>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Статус</th>
+                    <th>Категория</th>
+                    <th>ЖК</th>
+                    <th>Адрес</th>
+                    <th>Клиент</th>
+                    <th>Телефон</th>
+                    <th>Создана</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td><a href="/tickets/{{ ticket.id }}">{{ ticket.ticket_id }}</a></td>
+                    <td><span class="badge badge-{{ ticket.status }}">{{ status_display.get(ticket.status, ticket.status) }}</span></td>
+                    <td>{{ category_display.get(ticket.category, ticket.category) }}</td>
+                    <td>{{ complex_display.get(ticket.residential_complex, ticket.residential_complex) }}</td>
+                    <td>
+                        {% if ticket.block %}блок {{ ticket.block }}, {% endif %}
+                        {% if ticket.entrance %}подъезд {{ ticket.entrance }}, {% endif %}
+                        кв. {{ ticket.apartment }}
+                    </td>
+                    <td>{{ ticket.client_full_name }}</td>
+                    <td>{{ ticket.client_phone }}</td>
+                    <td class="text-muted text-sm">{{ ticket.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-muted">Заявки не найдены</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_complex %}&complex={{ filter_complex }}{% endif %}">Назад</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+            <span class="active">{{ p }}</span>
+            {% else %}
+            <a href="?page={{ p }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_complex %}&complex={{ filter_complex }}{% endif %}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_complex %}&complex={{ filter_complex }}{% endif %}">Вперёд</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Тексты бота - QSS Admin{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">Тексты бота ({{ texts|length }})</h1>
+</div>
+
+<div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 1.5rem;">
+    <p style="margin: 0; color: #856404;">
+        <strong>Внимание:</strong> После редактирования текста изменения применяются автоматически.
+        Используйте плейсхолдеры <code>{placeholder}</code> для динамических значений.
+    </p>
+</div>
+
+<!-- Language tabs -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+    <a href="/texts?lang=ru" class="btn {% if current_lang == 'ru' %}btn-primary{% else %}btn-secondary{% endif %}">
+        Русский (RU)
+    </a>
+    <a href="/texts?lang=kk" class="btn {% if current_lang == 'kk' %}btn-primary{% else %}btn-secondary{% endif %}">
+        Казахский (KK)
+    </a>
+</div>
+
+{% for cat_key, (cat_name, cat_texts) in categories.items() %}
+<div class="card" style="margin-bottom: 1rem;">
+    <h2 class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+        {{ cat_name }}
+        <span class="badge" style="background: #e9ecef; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+            {{ cat_texts|length }}
+        </span>
+    </h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 200px;">Ключ</th>
+                    <th style="width: 200px;">Описание</th>
+                    <th>Текст</th>
+                    <th style="width: 80px;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for text in cat_texts %}
+                <tr>
+                    <td>
+                        <code style="font-size: 0.75rem; background: #f8f9fa; padding: 0.15rem 0.4rem; border-radius: 3px;">{{ text.key }}</code>
+                    </td>
+                    <td class="text-muted text-sm">
+                        {{ descriptions.get(text.key, text.description) or '-' }}
+                    </td>
+                    <td>
+                        <div style="max-width: 400px; max-height: 80px; overflow: hidden; font-size: 0.85rem; line-height: 1.4; color: #333;">
+                            {{ text.value[:150]|replace('\n', ' ↵ ') }}{% if text.value|length > 150 %}...{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <a href="/texts/{{ text.id }}/edit" class="btn btn-secondary btn-sm">
+                            Изменить
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+<div class="card" style="margin-top: 2rem;">
+    <h2 class="card-title">Добавить новый текст</h2>
+    <form method="post" action="/texts/add">
+        <div class="detail-grid">
+            <div class="form-group">
+                <label class="form-label">Ключ *</label>
+                <input type="text" name="key" class="form-input" required placeholder="my_custom_text">
+                <small class="text-muted">Уникальный идентификатор текста</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Описание</label>
+                <input type="text" name="description" class="form-input" placeholder="Для чего используется этот текст">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Текст (RU) *</label>
+            <textarea name="value_ru" class="form-textarea" rows="3" required placeholder="Текст на русском с {плейсхолдерами}"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Текст (KK)</label>
+            <textarea name="value_kk" class="form-textarea" rows="3" placeholder="Текст на казахском с {плейсхолдерами}"></textarea>
+            <small class="text-muted">Если не указан, будет использоваться русский текст</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить текст</button>
+    </form>
+</div>
+
+<div class="card" style="margin-top: 1rem;">
+    <h2 class="card-title">Доступные плейсхолдеры</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; font-size: 0.85rem;">
+        <div>
+            <strong>Общие:</strong>
+            <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+                <li><code>{full_name}</code> — ФИО пользователя</li>
+                <li><code>{ticket_id}</code> — Номер заявки</li>
+                <li><code>{status}</code> — Статус заявки</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Пагинация:</strong>
+            <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+                <li><code>{page}</code> — Текущая страница</li>
+                <li><code>{total}</code> — Всего страниц</li>
+                <li><code>{count}</code> — Количество</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Уведомления:</strong>
+            <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+                <li><code>{card}</code> — Карточка заявки</li>
+                <li><code>{master}</code> — Имя мастера</li>
+                <li><code>{decision}</code> — Решение</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Лимиты:</strong>
+            <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+                <li><code>{limit}</code> — Лимит заявок</li>
+                <li><code>{filter}</code> — Фильтр</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Мастера - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">Мастера</h1>
+    <a href="/masters/add" class="btn btn-primary">Добавить</a>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                    <th>Telegram ID</th>
+                    <th>Username</th>
+                    <th>ЖК</th>
+                    <th>Активен</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for master in masters %}
+                <tr>
+                    <td>{{ master.id }}</td>
+                    <td>{{ master.full_name }}</td>
+                    <td>{{ master.telegram_id }}</td>
+                    <td>{{ master.username or '-' }}</td>
+                    <td>
+                        {% for c in master.residential_complex.split(',') %}
+                        <span class="badge badge-new">{{ complex_display.get(c.strip(), c.strip()) }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>{{ 'Да' if master.is_active else 'Нет' }}</td>
+                    <td class="actions">
+                        <a href="/masters/{{ master.id }}/edit" class="btn btn-secondary btn-sm">Изменить</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-muted">Мастера не найдены</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

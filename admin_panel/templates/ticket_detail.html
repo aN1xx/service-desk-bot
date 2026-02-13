@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Заявка {{ ticket.ticket_id }} - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">Заявка {{ ticket.ticket_id }}</h1>
+    <a href="/tickets" class="btn btn-secondary">К списку</a>
+</div>
+
+<div class="card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Статус</div>
+            <div class="detail-value">
+                <span class="badge badge-{{ ticket.status }}">{{ status_display.get(ticket.status, ticket.status) }}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Категория</div>
+            <div class="detail-value">{{ category_display.get(ticket.category, ticket.category) }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">ЖК</div>
+            <div class="detail-value">{{ complex_display.get(ticket.residential_complex, ticket.residential_complex) }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Адрес</div>
+            <div class="detail-value">
+                {% if ticket.block %}Блок {{ ticket.block }}, {% endif %}
+                {% if ticket.entrance %}Подъезд {{ ticket.entrance }}, {% endif %}
+                Кв. {{ ticket.apartment }}
+            </div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Клиент</div>
+            <div class="detail-value">{{ ticket.client_full_name }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Телефон</div>
+            <div class="detail-value">{{ ticket.client_phone }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Создана</div>
+            <div class="detail-value">{{ ticket.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        </div>
+        {% if ticket.completed_at %}
+        <div class="detail-item">
+            <div class="detail-label">Выполнена</div>
+            <div class="detail-value">{{ ticket.completed_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Описание</h2>
+    <p>{{ ticket.description }}</p>
+
+    {% if ticket.sub_category %}
+    <div class="mt-2">
+        <strong>Подкатегория:</strong> {{ ticket.sub_category }}
+    </div>
+    {% endif %}
+
+    {% if ticket.car_plate %}
+    <div class="mt-2">
+        <strong>Госномер:</strong> {{ ticket.car_plate }}
+    </div>
+    {% endif %}
+
+    {% if ticket.car_gate %}
+    <div class="mt-2">
+        <strong>Заезд:</strong> {{ ticket.car_gate }}
+    </div>
+    {% endif %}
+
+    {% if ticket.parking_number %}
+    <div class="mt-2">
+        <strong>Паркинг:</strong> {{ ticket.parking_number }}
+    </div>
+    {% endif %}
+
+    {% if ticket.camera_access_email %}
+    <div class="mt-2">
+        <strong>Email:</strong> {{ ticket.camera_access_email }}
+    </div>
+    {% endif %}
+
+    {% if ticket.key_count %}
+    <div class="mt-2">
+        <strong>Ключи:</strong> {{ ticket.key_count }} ({{ ticket.key_type }})
+    </div>
+    {% endif %}
+</div>
+
+{% if ticket.rating %}
+<div class="card">
+    <h2 class="card-title">Оценка</h2>
+    <p><strong>{{ ticket.rating }}⭐</strong></p>
+    {% if ticket.rating_comment %}
+    <p class="text-muted">{{ ticket.rating_comment }}</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

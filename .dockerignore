@@ -1,0 +1,16 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+.env
+.env.example
+tests/
+*.log
+.idea
+.vscode
+*.egg-info
+dist
+build

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редактирование' if master else 'Добавление' }} мастера - QSS Админ{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <h1 class="page-title">{{ 'Редактирование' if master else 'Добавление' }} мастера</h1>
+    <a href="/masters" class="btn btn-secondary">К списку</a>
+</div>
+
+<div class="card">
+    <form method="post" action="{{ '/masters/' ~ master.id ~ '/edit' if master else '/masters/add' }}">
+        <div class="detail-grid">
+            <div class="form-group">
+                <label class="form-label">ФИО *</label>
+                <input type="text" name="full_name" class="form-input" required value="{{ master.full_name if master else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Telegram ID *</label>
+                <input type="number" name="telegram_id" class="form-input" required value="{{ master.telegram_id if master else '' }}">
+                <small class="text-muted">Узнать можно через @userinfobot в Telegram</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-input" placeholder="master_alasha" value="{{ master.username if master and master.username else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">ЖК * (через запятую)</label>
+                <input type="text" name="residential_complex" class="form-input" required placeholder="alasha,terekti" value="{{ master.residential_complex if master else '' }}">
+                <small class="text-muted">Варианты: alasha, terekti, kemel, jana_omir</small>
+            </div>
+
+            {% if master %}
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" name="is_active" value="true" {{ 'checked' if master.is_active else '' }}>
+                    Активен
+                </label>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-2">
+            <button type="submit" class="btn btn-primary">{{ 'Сохранить' if master else 'Создать' }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

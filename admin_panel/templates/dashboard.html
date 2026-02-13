@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - QSS Админ{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Главная</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_tickets }}</div>
+        <div class="stat-label">Всего заявок</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.new_tickets }}</div>
+        <div class="stat-label">Новые</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.in_progress }}</div>
+        <div class="stat-label">В работе</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.completed }}</div>
+        <div class="stat-label">Выполнено</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_owners }}</div>
+        <div class="stat-label">Собственники</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_masters }}</div>
+        <div class="stat-label">Мастера</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="flex justify-between items-center">
+        <h2 class="card-title mb-0">Последние заявки</h2>
+        <a href="/tickets" class="btn btn-secondary btn-sm">Все заявки</a>
+    </div>
+    <div class="table-wrapper mt-2">
+        <table>
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Статус</th>
+                    <th>Категория</th>
+                    <th>ЖК</th>
+                    <th>Клиент</th>
+                    <th>Создана</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in recent_tickets %}
+                <tr>
+                    <td><a href="/tickets/{{ ticket.id }}">{{ ticket.ticket_id }}</a></td>
+                    <td><span class="badge badge-{{ ticket.status }}">{{ status_display.get(ticket.status, ticket.status) }}</span></td>
+                    <td>{{ category_display.get(ticket.category, ticket.category) }}</td>
+                    <td>{{ complex_display.get(ticket.residential_complex, ticket.residential_complex) }}</td>
+                    <td>{{ ticket.client_full_name }}</td>
+                    <td class="text-muted text-sm">{{ ticket.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-muted">Заявок пока нет</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
